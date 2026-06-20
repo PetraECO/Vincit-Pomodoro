@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Session Hub</title>
+  <title>Vincit</title>
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
@@ -15,12 +15,12 @@
     body{
       font-family:'Jost',system-ui,sans-serif;
       background:linear-gradient(135deg,var(--bg-light) 0%,var(--bg-dark) 100%);
-      min-height:100vh;padding:20px;color:#1a202c;transition:background .3s
+      min-height:100vh;padding:16px 20px 24px;color:#1a202c;transition:background .3s
     }
     .container{max-width:960px;margin:0 auto}
     h1{
-      text-align:center;color:#1a202c;margin-bottom:28px;
-      font-size:2.2em;font-weight:800;letter-spacing:-0.5px
+      text-align:center;color:#1a202c;margin-bottom:18px;
+      font-size:2em;font-weight:800;letter-spacing:2px;text-transform:uppercase
     }
 
     /* ── TABS ── */
@@ -34,9 +34,15 @@
     .tab.active{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(102,126,234,.38)}
 
     /* ── TAB CONTENT ── */
-    .tab-content{display:none;background:#fff;padding:30px;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.11)}
+    .tab-content{display:none;padding:0}
     .tab-content.active{display:block}
     .tab-content h2{color:#1a202c;margin-bottom:22px;font-size:1.5em;font-weight:700}
+    /* Home and Timer sit flush on the gradient background */
+    #home.tab-content,#timer.tab-content{background:transparent}
+    /* Other tabs keep the white card */
+    #progress.tab-content,#history.tab-content,#settings.tab-content{
+      background:#fff;padding:28px;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.11)
+    }
 
     /* ══ HOME SCREEN ══ */
 
@@ -83,7 +89,7 @@
     .area-card .start-hint{
       display:flex;align-items:center;justify-content:center;gap:6px;
       margin-top:16px;padding:10px;border-radius:8px;
-      font-size:.85em;font-weight:700;color:#fff;
+      font-size:.88em;font-weight:700;color:#fff;
       background:var(--accent-color);opacity:.9;transition:opacity .2s
     }
     .area-card:hover .start-hint{opacity:1}
@@ -370,7 +376,7 @@
 </div>
 
 <div class="container">
-  <h1>📚 Session Hub</h1>
+  <h1>Vincit</h1>
 
   <div class="tabs" id="tabBar">
     <div class="tab active" data-tab="home" onclick="switchTab('home',this)">Home</div>
