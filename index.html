@@ -18,10 +18,8 @@
       min-height:100vh;padding:16px 20px 24px;color:#1a202c;transition:background .3s
     }
     .container{max-width:960px;margin:0 auto}
-    h1{
-      text-align:center;color:#1a202c;margin-bottom:18px;
-      font-size:2em;font-weight:800;letter-spacing:2px;text-transform:uppercase
-    }
+    .brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:22px}
+    h1{color:#1a202c;margin:0;font-size:2em;font-weight:800;letter-spacing:-.5px}
 
     /* ── TABS ── */
     .tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
@@ -311,7 +309,7 @@
     .celeb-btn-ghost:hover{background:rgba(255,255,255,.1)}
   /* ══ DARK THEME (DEFAULT) ══ */
   body{background:linear-gradient(135deg,#0d0d1f 0%,#13101e 100%)}
-  h1{color:#e8e8f4;letter-spacing:3px}
+  h1{color:#e8e8f4;letter-spacing:-.5px}
   .stat-date{color:#55557a!important}
   .tab{background:rgba(255,255,255,.05);color:#8888aa;border:1px solid rgba(255,255,255,.05)}
   .tab:hover{background:rgba(255,255,255,.09);color:#e8e8f4}
@@ -437,7 +435,26 @@
 </div>
 
 <div class="container">
-  <h1>Vincit</h1>
+  <div class="brand">
+    <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="vg" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#7c8ef5"/>
+          <stop offset="100%" stop-color="#a855f7"/>
+        </linearGradient>
+      </defs>
+      <!-- Nearly-complete ring: completion motif, ~92% filled, gap at top-left -->
+      <circle cx="22" cy="22" r="19" stroke="url(#vg)" stroke-width="3.2"
+        fill="none" stroke-linecap="round"
+        stroke-dasharray="110 10"
+        transform="rotate(-90 22 22)"/>
+      <!-- V -->
+      <polyline points="12,15 22,31 32,15"
+        stroke="url(#vg)" stroke-width="3.2"
+        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+    <h1>Vincit</h1>
+  </div>
 
   <div class="tabs" id="tabBar">
     <div class="tab active" data-tab="home" onclick="switchTab('home',this)">Home</div>
