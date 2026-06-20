@@ -252,6 +252,11 @@
       margin-top:4px;transition:all .2s
     }
     .btn-save-goals:hover{background:var(--primary-dark)}
+    .area-edit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    @media(max-width:600px){.area-edit-grid{grid-template-columns:1fr}}
+    .area-edit-card{background:#fff;border:1px solid #e8ecf4;border-radius:12px;padding:16px;border-top:4px solid #667eea}
+    .area-edit-icon-preview{font-size:1.6em;text-align:center;margin-bottom:10px}
+    input[type="color"]{width:44px;height:32px;padding:2px;border-radius:6px;cursor:pointer;border:2px solid #e2e8f0;background:none}
     .btn-danger{
       padding:10px 18px;background:#f56565;color:#fff;border:none;border-radius:8px;
       cursor:pointer;font-family:inherit;font-weight:700;font-size:.9em
@@ -340,6 +345,8 @@
   .settings-section h3{color:#e8e8f4}
   .settings-section p{color:#8888aa}
   .goal-card{background:#16162a;border-color:rgba(255,255,255,.06)}
+  .area-edit-card{background:#16162a;border-color:rgba(255,255,255,.06)}
+  input[type="color"]{border-color:rgba(255,255,255,.15);background:none}
   .goal-row label{color:#8888aa}
   .goal-row input{background:#0a0a18;border-color:rgba(255,255,255,.1);color:#e8e8f4}
   .goal-row input:focus{border-color:var(--primary)}
@@ -542,6 +549,13 @@
     <h2>Settings</h2>
 
     <div class="settings-section">
+      <h3>✏️ Your Areas</h3>
+      <p>Rename, recolour, or change the icon for each focus area. Note: renaming won't update past sessions.</p>
+      <div class="area-edit-grid" id="areaEditGrid"></div>
+      <button class="btn-save-goals" onclick="saveAreas()" style="margin-top:16px">Save Areas</button>
+    </div>
+
+    <div class="settings-section">
       <h3>🎯 Weekly Goals</h3>
       <p>Hours you aim to spend in each area per week</p>
       <div class="goal-grid" id="goalGrid"></div>
@@ -564,11 +578,12 @@
 
 <script>
 // ══ CONFIG ══
-const AREAS = [
+const DEFAULT_AREAS = [
   {name:'Work',     icon:'💼', color:'#0ea5e9'},
   {name:'Study',    icon:'📚', color:'#667eea'},
   {name:'Creative', icon:'✍️',  color:'#ec4899'}
 ];
+let AREAS = [...DEFAULT_AREAS];
 
 const DEFAULT_GOALS = {Work:{weekly:10,monthly:40},Study:{weekly:16,monthly:64},Creative:{weekly:5,monthly:20}};
 
@@ -626,6 +641,10 @@ function init() {
 
   // Load goals
   areaGoals = store.get('areaGoals') || {...DEFAULT_GOALS};
+
+  // Load custom areas
+  const customAreas = store.get('customAreas');
+  if (customAreas && customAreas.length === 3) AREAS = customAreas;
 
   // Load theme
   const theme = store.get('theme');
@@ -1092,6 +1111,7 @@ function renderHistory() {
 
 // ══ SETTINGS ══
 function renderSettings() {
+  renderAreaEditGrid();
   renderGoalGrid();
   renderColorOptions();
 }
@@ -1121,6 +1141,51 @@ function saveGoals() {
   });
   store.set('areaGoals', areaGoals);
   alert('Goals saved! ✓');
+}
+
+function renderAreaEditGrid() {
+  const grid = document.getElementById('areaEditGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  AREAS.forEach((area, i) => {
+    const card = document.createElement('div');
+    card.className = 'area-edit-card';
+    card.style.borderTopColor = area.color;
+    card.innerHTML = `
+      <div class="area-edit-icon-preview">${area.icon}</div>
+      <div class="goal-row"><label>Name</label>
+        <input type="text" id="aed-name-${i}" value="${area.name}" maxlength="20" style="flex:1;text-align:left">
+      </div>
+      <div class="goal-row"><label>Icon</label>
+        <input type="text" id="aed-icon-${i}" value="${area.icon}" maxlength="4" style="width:52px;text-align:center;font-size:1.1em">
+      </div>
+      <div class="goal-row"><label>Colour</label>
+        <input type="color" id="aed-color-${i}" value="${area.color}">
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function saveAreas() {
+  const oldNames = AREAS.map(a => a.name);
+  const newAreas = AREAS.map((area, i) => ({
+    name:  (document.getElementById(`aed-name-${i}`).value.trim()  || area.name),
+    icon:  (document.getElementById(`aed-icon-${i}`).value.trim()  || area.icon),
+    color: document.getElementById(`aed-color-${i}`).value
+  }));
+  // Migrate goals from old names to new names so weekly goals carry over
+  const newGoals = {};
+  newAreas.forEach((area, i) => {
+    const old = oldNames[i];
+    newGoals[area.name] = areaGoals[old] || DEFAULT_GOALS[old] || {weekly:10, monthly:40};
+  });
+  areaGoals = newGoals;
+  store.set('areaGoals', areaGoals);
+  AREAS = newAreas;
+  store.set('customAreas', AREAS);
+  renderHome();
+  renderAreaEditGrid();
+  alert('Areas saved! ✓');
 }
 
 function renderColorOptions() {
