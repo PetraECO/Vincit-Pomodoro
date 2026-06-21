@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vincit</title>
+  <title>Pebbl</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -611,16 +611,19 @@
   <div class="splash-inner">
     <div class="splash-logo">
       <svg width="52" height="52" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs><linearGradient id="sg" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+        <defs><linearGradient id="sg" x1="4" y1="4" x2="40" y2="40" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stop-color="#667eea"/><stop offset="100%" stop-color="#764ba2"/>
         </linearGradient></defs>
-        <circle cx="22" cy="22" r="19" stroke="url(#sg)" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-dasharray="110 10" transform="rotate(-90 22 22)"/>
-        <polyline points="12,15 22,31 32,15" stroke="url(#sg)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <ellipse cx="20" cy="26" rx="12" ry="10" fill="url(#sg)" opacity=".95"/>
+        <ellipse cx="20" cy="26" rx="12" ry="10" fill="white" opacity=".08"/>
+        <ellipse cx="16" cy="21" rx="4" ry="2.5" fill="white" opacity=".22" transform="rotate(-20 16 21)"/>
+        <path d="M34 30 Q38 22 34 14" stroke="url(#sg)" stroke-width="2" stroke-linecap="round" fill="none" opacity=".5"/>
+        <path d="M37 32 Q43 22 37 12" stroke="url(#sg)" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".28"/>
       </svg>
-      <h1>Vincit</h1>
+      <h1>Pebbl</h1>
     </div>
-    <div class="splash-tagline">Focus better. Track what matters.</div>
-    <div class="splash-sub">A personal focus tracker built around your areas of work — not endless to-do lists.</div>
+    <div class="splash-tagline">Small steps. Real progress.</div>
+    <div class="splash-sub">A gentle focus tracker for scattered minds — built around how you actually work, not how you think you should.</div>
     <div class="splash-actions">
       <button class="splash-btn-primary" onclick="dismissSplash('signup')">Get started →</button>
       <button class="splash-btn-ghost" onclick="dismissSplash('signin')">I already have an account</button>
@@ -632,13 +635,16 @@
   <div class="onboarding-box">
     <div class="onboarding-logo">
       <svg width="36" height="36" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs><linearGradient id="og" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+        <defs><linearGradient id="og" x1="4" y1="4" x2="40" y2="40" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stop-color="#667eea"/><stop offset="100%" stop-color="#764ba2"/>
         </linearGradient></defs>
-        <circle cx="22" cy="22" r="19" stroke="url(#og)" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-dasharray="110 10" transform="rotate(-90 22 22)"/>
-        <polyline points="12,15 22,31 32,15" stroke="url(#og)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <ellipse cx="20" cy="26" rx="12" ry="10" fill="url(#og)" opacity=".95"/>
+        <ellipse cx="20" cy="26" rx="12" ry="10" fill="white" opacity=".08"/>
+        <ellipse cx="16" cy="21" rx="4" ry="2.5" fill="white" opacity=".22" transform="rotate(-20 16 21)"/>
+        <path d="M34 30 Q38 22 34 14" stroke="url(#og)" stroke-width="2" stroke-linecap="round" fill="none" opacity=".5"/>
+        <path d="M37 32 Q43 22 37 12" stroke="url(#og)" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".28"/>
       </svg>
-      <h2>Vincit</h2>
+      <h2>Pebbl</h2>
     </div>
 
     <!-- Auth tabs -->
@@ -817,22 +823,20 @@
     <button id="signOutBtn" onclick="signOut()" style="display:none;position:absolute;right:0;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.55);padding:6px 14px;border-radius:8px;font-family:inherit;font-size:.78em;font-weight:600;cursor:pointer;transition:all .2s" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,.55)'">Sign out</button>
     <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="vg" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#667eea"/>
-          <stop offset="100%" stop-color="#764ba2"/>
+        <linearGradient id="vg" x1="4" y1="4" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#667eea"/><stop offset="100%" stop-color="#764ba2"/>
         </linearGradient>
       </defs>
-      <!-- Nearly-complete ring: completion motif, ~92% filled, gap at top-left -->
-      <circle cx="22" cy="22" r="19" stroke="url(#vg)" stroke-width="3.2"
-        fill="none" stroke-linecap="round"
-        stroke-dasharray="110 10"
-        transform="rotate(-90 22 22)"/>
-      <!-- V -->
-      <polyline points="12,15 22,31 32,15"
-        stroke="url(#vg)" stroke-width="3.2"
-        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <!-- pebble body -->
+      <ellipse cx="20" cy="26" rx="12" ry="10" fill="url(#vg)" opacity=".95"/>
+      <ellipse cx="20" cy="26" rx="12" ry="10" fill="white" opacity=".08"/>
+      <!-- shine -->
+      <ellipse cx="16" cy="21" rx="4" ry="2.5" fill="white" opacity=".22" transform="rotate(-20 16 21)"/>
+      <!-- ripple arcs -->
+      <path d="M34 30 Q38 22 34 14" stroke="url(#vg)" stroke-width="2" stroke-linecap="round" fill="none" opacity=".5"/>
+      <path d="M37 32 Q43 22 37 12" stroke="url(#vg)" stroke-width="1.5" stroke-linecap="round" fill="none" opacity=".28"/>
     </svg>
-    <h1>Vincit</h1>
+    <h1>Pebbl</h1>
   </div>
 
   <div class="tabs" id="tabBar">
@@ -1131,7 +1135,7 @@ async function loadUserData() {
 function showApp() {
   document.getElementById('authOverlay').classList.add('hidden');
   document.getElementById('splashOverlay').classList.add('hidden');
-  store.set('vincit_visited', true);
+  store.set('pebbl_visited', true);
   const btn = document.getElementById('signOutBtn');
   if (btn) btn.style.display = 'block';
   renderHome();
@@ -1140,7 +1144,7 @@ function showApp() {
 }
 
 function showAuthOverlay(tab) {
-  const hasVisited = store.get('vincit_visited');
+  const hasVisited = store.get('pebbl_visited');
   if (!hasVisited) {
     // First-time visitor — show splash instead
     document.getElementById('splashOverlay').classList.remove('hidden');
@@ -1154,7 +1158,7 @@ function showAuthOverlay(tab) {
 }
 
 function dismissSplash(tab) {
-  store.set('vincit_visited', true);
+  store.set('pebbl_visited', true);
   const splash = document.getElementById('splashOverlay');
   splash.style.opacity = '0';
   setTimeout(() => {
