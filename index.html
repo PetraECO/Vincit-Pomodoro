@@ -530,8 +530,8 @@
     <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="vg" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#7c8ef5"/>
-          <stop offset="100%" stop-color="#a855f7"/>
+          <stop offset="0%" stop-color="#6366f1"/>
+          <stop offset="100%" stop-color="#4338ca"/>
         </linearGradient>
       </defs>
       <!-- Nearly-complete ring: completion motif, ~92% filled, gap at top-left -->
@@ -665,9 +665,9 @@
 <script>
 // ══ CONFIG ══
 const DEFAULT_AREAS = [
-  {name:'Work',     icon:'💼', color:'#0ea5e9'},
-  {name:'Study',    icon:'📚', color:'#667eea'},
-  {name:'Creative', icon:'✍️',  color:'#ec4899'}
+  {name:'Work',     icon:'💼', color:'#0369a1'},
+  {name:'Study',    icon:'📚', color:'#4338ca'},
+  {name:'Creative', icon:'✍️',  color:'#7e22ce'}
 ];
 let AREAS = [...DEFAULT_AREAS];
 
@@ -680,7 +680,7 @@ const KUDOS = [
 ];
 
 const COLOR_THEMES = [
-  {name:'Charcoal',primary:'#667eea',secondary:'#764ba2',bgLight:'#0d0d1f',bgDark:'#13101e'},
+  {name:'Indigo',  primary:'#6366f1',secondary:'#4338ca',bgLight:'#0d0d1f',bgDark:'#13101e'},
   {name:'Midnight',primary:'#2193b0',secondary:'#6dd5ed',bgLight:'#0a0f1a',bgDark:'#0d1422'},
   {name:'Ember',   primary:'#f12711',secondary:'#f5af19',bgLight:'#1a0a08',bgDark:'#1f0e05'},
   {name:'Forest',  primary:'#11998e',secondary:'#38ef7d',bgLight:'#0a1810',bgDark:'#0d1f12'},
@@ -732,9 +732,9 @@ function init() {
   const customAreas = store.get('customAreas');
   if (customAreas && customAreas.length === 3) AREAS = customAreas;
 
-  // Load theme
-  const theme = store.get('theme');
-  if (theme) applyTheme(theme);
+  // Load theme (default to Indigo if none saved)
+  const theme = store.get('theme') || COLOR_THEMES[0];
+  applyTheme(theme);
 
   renderHome();
   updateTimerDisplay();
