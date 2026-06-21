@@ -66,31 +66,51 @@
     .area-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
     @media(max-width:650px){.area-cards{grid-template-columns:1fr}}
     .area-card{
-      background:#1e1e38;border:1px solid rgba(255,255,255,.08);border-radius:16px;
-      padding:28px 22px 20px;cursor:pointer;transition:all .25s;
-      position:relative;overflow:hidden;border-top:5px solid var(--accent-color)
+      background:rgba(255,255,255,.045);
+      backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+      border:1px solid rgba(255,255,255,.09);border-radius:20px;
+      padding:26px 22px 22px;cursor:pointer;transition:all .3s ease;
+      position:relative;overflow:hidden
     }
+    /* top accent line */
     .area-card::before{
-      content:'';position:absolute;inset:0;
-      background:linear-gradient(135deg,rgba(255,255,255,.04) 0%,rgba(0,0,0,0) 60%);
-      pointer-events:none
+      content:'';position:absolute;top:0;left:0;right:0;height:1px;
+      background:var(--accent-color);opacity:.85;pointer-events:none
     }
-    .area-card:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.4)}
-    .area-card:active{transform:translateY(-2px)}
-    .area-icon{font-size:2em;margin-bottom:10px;display:block}
-    .area-name{font-size:.75em;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,.45);margin-bottom:4px}
-    .area-hours{font-size:2.2em;font-weight:800;color:#fff;line-height:1;margin-bottom:2px}
-    .area-goal-text{font-size:.8em;color:rgba(255,255,255,.38);margin-bottom:14px;font-weight:500}
-    .area-bar-wrap{height:7px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-bottom:8px}
-    .area-bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
-    .area-pct{font-size:.75em;font-weight:700;color:rgba(255,255,255,.38)}
+    /* radial glow behind icon */
+    .area-card::after{
+      content:'';position:absolute;top:-50px;left:50%;transform:translateX(-50%);
+      width:200px;height:120px;
+      background:radial-gradient(ellipse,var(--accent-color) 0%,transparent 70%);
+      opacity:.1;pointer-events:none;transition:opacity .3s
+    }
+    .area-card:hover{
+      transform:translateY(-4px);
+      background:rgba(255,255,255,.07);
+      box-shadow:0 20px 48px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.1)
+    }
+    .area-card:hover::after{opacity:.18}
+    .area-card:active{transform:translateY(-1px)}
+    .area-icon-wrap{
+      width:46px;height:46px;border-radius:13px;
+      display:flex;align-items:center;justify-content:center;
+      margin-bottom:18px;flex-shrink:0
+    }
+    .area-name{font-size:.72em;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,.4);margin-bottom:6px}
+    .area-hours{font-size:2.4em;font-weight:800;color:#fff;line-height:1;margin-bottom:2px}
+    .area-goal-text{font-size:.8em;color:rgba(255,255,255,.32);margin-bottom:16px;font-weight:500}
+    .area-bar-wrap{height:3px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;margin-bottom:10px}
+    .area-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+    .area-pct{font-size:.75em;font-weight:600;color:rgba(255,255,255,.32)}
     .area-card .start-hint{
-      display:flex;align-items:center;justify-content:center;gap:6px;
-      margin-top:16px;padding:10px;border-radius:8px;
-      font-size:.88em;font-weight:700;color:#fff;
-      background:var(--accent-color);opacity:.9;transition:opacity .2s
+      display:flex;align-items:center;justify-content:center;gap:7px;
+      margin-top:18px;padding:11px;border-radius:11px;
+      font-size:.87em;font-weight:700;color:#fff;
+      border:1px solid rgba(255,255,255,.15);
+      background:rgba(255,255,255,.06);
+      opacity:0;transform:translateY(4px);transition:all .2s ease
     }
-    .area-card:hover .start-hint{opacity:1}
+    .area-card:hover .start-hint{opacity:1;transform:translateY(0)}
 
     /* ══ SESSION START MODAL ══ */
     .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;justify-content:center;align-items:flex-end}
@@ -526,8 +546,13 @@
   body.light-mode .recent-area{color:#18181b}
   body.light-mode .recent-task{color:#71717a}
   body.light-mode .recent-header{color:#a1a1aa}
-  body.light-mode .area-card{background:#fff;border-color:#e4e4e7}
-  body.light-mode .area-card::before{background:none}
+  body.light-mode .area-card{background:rgba(255,255,255,.7);border-color:rgba(0,0,0,.07)}
+  body.light-mode .area-card:hover{background:rgba(255,255,255,.9)}
+  body.light-mode .area-name{color:rgba(0,0,0,.4)}
+  body.light-mode .area-hours{color:#18181b}
+  body.light-mode .area-goal-text,body.light-mode .area-pct{color:rgba(0,0,0,.35)}
+  body.light-mode .area-bar-wrap{background:rgba(0,0,0,.08)}
+  body.light-mode .area-card .start-hint{border-color:rgba(0,0,0,.1);background:rgba(0,0,0,.04);color:#18181b}
   body.light-mode .area-name{color:#71717a}
   body.light-mode .area-hours{color:#18181b}
   body.light-mode .area-goal-text{color:#a1a1aa}
@@ -917,6 +942,18 @@ const SUPABASE_KEY  = 'sb_publishable_au3b9IbvnK7ECv2PJxGxMw_xGNJaTs8';
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ══ CONFIG ══
+function getAreaIconPath(name) {
+  const n = (name || '').toLowerCase();
+  if (n === 'work')
+    return '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><path d="M2 12h20"/>';
+  if (n === 'study')
+    return '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>';
+  if (n === 'creative')
+    return '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>';
+  // generic: target/circle icon for custom areas
+  return '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/>';
+}
+
 const DEFAULT_AREAS = [
   {name:'Work',     icon:'💼', color:'#6b9cc4'},
   {name:'Study',    icon:'📚', color:'#9b84c8'},
@@ -1171,13 +1208,15 @@ function renderAreaCards() {
     const hoursDisplay = done > 0 ? `${done.toFixed(1)}h` : '—';
     const pctDisplay   = done > 0 ? `${pct.toFixed(0)}% of goal` : 'No sessions yet this week';
     card.innerHTML = `
-      <span class="area-icon">${area.icon}</span>
+      <div class="area-icon-wrap" style="background:${area.color}22;border:1px solid ${area.color}44">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="${area.color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${getAreaIconPath(area.name)}</svg>
+      </div>
       <div class="area-name">${area.name}</div>
       <div class="area-hours">${hoursDisplay}</div>
       <div class="area-goal-text">of ${goal}h this week</div>
       <div class="area-bar-wrap"><div class="area-bar-fill" style="width:${pct}%;background:${area.color}"></div></div>
       <div class="area-pct">${pctDisplay}</div>
-      <div class="start-hint" style="background:${area.color}">▶ Start Session</div>`;
+      <div class="start-hint">▶ Start Session</div>`;
     card.onclick = () => openSessionModal(area);
     grid.appendChild(card);
   });
