@@ -517,9 +517,9 @@
     <div class="home-card" id="homeCard"></div>
     <div class="stat-date" id="todayDate" style="margin-bottom:10px;text-align:right;font-size:.85em;color:#718096;font-weight:600"></div>
     <div class="daily-stats" id="dailyStats">
-      <div class="stat-pill"><div class="stat-pill-val" id="statFocus">0h</div><div class="stat-pill-lbl">Today's Focus</div></div>
-      <div class="stat-pill"><div class="stat-pill-val" id="statSessions">0</div><div class="stat-pill-lbl">Sessions</div></div>
-      <div class="stat-pill"><div class="stat-pill-val" id="statStreak">0 🔥</div><div class="stat-pill-lbl">Day Streak</div></div>
+      <div class="stat-pill"><div class="stat-pill-val" id="statFocus">—</div><div class="stat-pill-lbl">This Week</div></div>
+      <div class="stat-pill"><div class="stat-pill-val" id="statSessions">—</div><div class="stat-pill-lbl">Sessions</div></div>
+      <div class="stat-pill"><div class="stat-pill-val" id="statStreak">—</div><div class="stat-pill-lbl">Streak</div></div>
     </div>
     <div class="area-cards" id="areaCards"></div>
   </div>
@@ -742,14 +742,18 @@ function getWeekSessions() {
 
 function calculateStreak() {
   if (!sessions.length) return 0;
+  const hasDay = d => sessions.some(s => {
+    const sd = new Date(s.date); sd.setHours(0,0,0,0);
+    return sd.getTime() === d.getTime();
+  });
+  const today = new Date(); today.setHours(0,0,0,0);
+  const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
+  // Start from today if it has sessions, else yesterday — if neither, streak is broken
+  const start = hasDay(today) ? new Date(today) : hasDay(yesterday) ? new Date(yesterday) : null;
+  if (!start) return 0;
   let streak = 0;
-  const check = new Date(); check.setHours(0,0,0,0);
-  while (true) {
-    const has = sessions.some(s => {
-      const d = new Date(s.date); d.setHours(0,0,0,0);
-      return d.getTime() === check.getTime();
-    });
-    if (!has) break;
+  const check = start;
+  while (hasDay(check)) {
     streak++;
     check.setDate(check.getDate() - 1);
   }
@@ -757,14 +761,14 @@ function calculateStreak() {
 }
 
 function renderDailyStats() {
-  const tod = getTodaySessions();
-  const totalHours = tod.reduce((s,x) => s + x.hours, 0);
+  const week = getWeekSessions();
+  const totalHours = week.reduce((s,x) => s + x.hours, 0);
   const h = Math.floor(totalHours);
   const m = Math.round((totalHours - h) * 60);
   const streak = calculateStreak();
   document.getElementById('statFocus').textContent =
-    totalHours > 0 ? (h > 0 ? `${h}h${m>0?` ${m}m`:''}` : `${m}m`) : '—';
-  document.getElementById('statSessions').textContent = tod.length || '—';
+    totalHours > 0 ? (h > 0 ? `${h}h${m > 0 ? ` ${m}m` : ''}` : `${m}m`) : '—';
+  document.getElementById('statSessions').textContent = week.length || '—';
   document.getElementById('statStreak').textContent = streak > 0 ? `${streak} 🔥` : '—';
 }
 
@@ -1207,7 +1211,7 @@ function saveGoals() {
     if (w > 0 && m > 0) areaGoals[area.name] = {weekly:w, monthly:m};
   });
   store.set('areaGoals', areaGoals);
-  alert('Goals saved! ✓');
+  switchTab('home', document.querySelector('[data-tab="home"]'));
 }
 
 function renderAreaEditGrid() {
@@ -1250,9 +1254,7 @@ function saveAreas() {
   store.set('areaGoals', areaGoals);
   AREAS = newAreas;
   store.set('customAreas', AREAS);
-  renderHome();
-  renderAreaEditGrid();
-  alert('Areas saved! ✓');
+  switchTab('home', document.querySelector('[data-tab="home"]'));
 }
 
 function renderColorOptions() {
@@ -1267,6 +1269,7 @@ function renderColorOptions() {
       document.querySelectorAll('.color-option').forEach(o => o.classList.remove('active'));
       el.classList.add('active');
       applyTheme(t); store.set('theme', t);
+      switchTab('home', document.querySelector('[data-tab="home"]'));
     };
     c.appendChild(el);
   });
