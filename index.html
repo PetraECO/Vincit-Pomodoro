@@ -662,6 +662,46 @@
       </div>
       <div class="auth-error hidden" id="siError"></div>
       <button class="btn-onboard" onclick="signIn()">Sign in →</button>
+      <button class="onboard-skip" onclick="showForgotPassword()" style="margin-top:12px;width:100%">Forgot your password?</button>
+    </div>
+
+    <!-- Forgot password panel -->
+    <div id="authForgotPw" style="display:none">
+      <button class="onboard-skip" onclick="showAuthTab('signin')" style="margin-bottom:20px;padding:0;text-align:left">← Back to sign in</button>
+      <div class="onboarding-title" style="margin-bottom:6px">Reset your password</div>
+      <div class="onboarding-sub" style="margin-bottom:24px">Enter your email and we'll send you a reset link.</div>
+      <div class="onboarding-field">
+        <label>Email</label>
+        <input type="email" id="fpEmail" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="auth-error hidden" id="fpError"></div>
+      <button class="btn-onboard" onclick="sendPasswordReset()">Send reset link →</button>
+    </div>
+
+    <!-- Reset link sent -->
+    <div id="authResetSent" style="display:none;text-align:center">
+      <div style="font-size:2.8em;margin-bottom:16px">🔑</div>
+      <div class="onboarding-title" style="margin-bottom:8px">Check your email</div>
+      <div class="onboarding-sub" id="resetSentAddr" style="margin-bottom:24px"></div>
+      <div style="background:rgba(102,126,234,.15);border:1px solid rgba(102,126,234,.3);border-radius:12px;padding:14px 16px;font-size:.85em;color:rgba(255,255,255,.7);text-align:left;line-height:1.6;margin-bottom:20px">
+        Click the link in the email to reset your password, then come back and sign in.
+      </div>
+      <button class="btn-onboard" onclick="showAuthTab('signin')">Back to sign in →</button>
+    </div>
+
+    <!-- Set new password (after clicking reset link) -->
+    <div id="authSetNewPw" style="display:none">
+      <div class="onboarding-title" style="margin-bottom:6px">Set a new password</div>
+      <div class="onboarding-sub" style="margin-bottom:24px">Choose something you'll remember.</div>
+      <div class="onboarding-field">
+        <label>New password</label>
+        <div class="pw-wrap">
+          <input type="password" id="newPwInput" placeholder="At least 6 characters" autocomplete="new-password">
+          <button type="button" class="pw-toggle" onclick="togglePw('newPwInput',this)" tabindex="-1">👁</button>
+        </div>
+      </div>
+      <div class="auth-error hidden" id="newPwError"></div>
+      <button class="btn-onboard" onclick="setNewPassword()">Update password →</button>
     </div>
 
     <!-- Sign up -->
@@ -1030,7 +1070,14 @@ async function init() {
 
   // Listen for auth changes
   sb.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_IN' && session) {
+    if (event === 'PASSWORD_RECOVERY') {
+      // User clicked the reset link — show the set-new-password form
+      document.getElementById('splashOverlay').classList.add('hidden');
+      document.getElementById('authOverlay').classList.remove('hidden');
+      document.querySelector('.auth-tabs').style.display = 'none';
+      hideAllAuthPanels();
+      document.getElementById('authSetNewPw').style.display = '';
+    } else if (event === 'SIGNED_IN' && session) {
       currentUser = session.user;
       await loadUserData();
       showApp();
@@ -1230,15 +1277,47 @@ function togglePw(inputId, btn) {
   btn.textContent = show ? '🙈' : '👁';
 }
 
+const AUTH_PANELS = ['authSignIn','authSignUp','authCheckEmail','authForgotPw','authResetSent','authSetNewPw'];
+function hideAllAuthPanels() {
+  AUTH_PANELS.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+}
+
 function showAuthTab(tab) {
   document.querySelector('.auth-tabs').style.display = '';
-  document.getElementById('authCheckEmail').style.display = 'none';
-  document.getElementById('authSignIn').style.display = tab === 'signin' ? '' : 'none';
-  document.getElementById('authSignUp').style.display = tab === 'signup' ? '' : 'none';
+  hideAllAuthPanels();
+  document.getElementById(tab === 'signin' ? 'authSignIn' : 'authSignUp').style.display = '';
   document.getElementById('tabSignIn').classList.toggle('active', tab === 'signin');
   document.getElementById('tabSignUp').classList.toggle('active', tab === 'signup');
   document.getElementById('siError').classList.add('hidden');
   document.getElementById('suError').classList.add('hidden');
+}
+
+function showForgotPassword() {
+  document.querySelector('.auth-tabs').style.display = 'none';
+  hideAllAuthPanels();
+  document.getElementById('authForgotPw').style.display = '';
+}
+
+async function sendPasswordReset() {
+  const email = document.getElementById('fpEmail').value.trim();
+  const errEl = document.getElementById('fpError');
+  errEl.classList.add('hidden');
+  if (!email) { errEl.textContent = 'Please enter your email address.'; errEl.classList.remove('hidden'); return; }
+  const { error } = await sb.auth.resetPasswordForEmail(email);
+  if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
+  hideAllAuthPanels();
+  document.getElementById('resetSentAddr').textContent = `We've sent a reset link to ${email}.`;
+  document.getElementById('authResetSent').style.display = '';
+}
+
+async function setNewPassword() {
+  const pw = document.getElementById('newPwInput').value;
+  const errEl = document.getElementById('newPwError');
+  errEl.classList.add('hidden');
+  if (pw.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; errEl.classList.remove('hidden'); return; }
+  const { error } = await sb.auth.updateUser({ password: pw });
+  if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
+  // Password updated — auth state will fire SIGNED_IN and showApp() will run
 }
 
 function setAuthLoading(on) {
