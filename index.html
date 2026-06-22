@@ -27,10 +27,29 @@
     .tab{
       padding:10px 22px;background:rgba(255,255,255,.08);border:none;
       color:rgba(255,255,255,.55);cursor:pointer;border-radius:8px;font-weight:600;
-      font-family:inherit;font-size:.9em;transition:all .2s
+      font-family:inherit;font-size:.9em;transition:all .2s;
+      position:relative
     }
     .tab:hover{background:rgba(255,255,255,.14);color:#fff}
     .tab.active{background:var(--primary);color:#fff;box-shadow:0 4px 14px rgba(102,126,234,.38)}
+
+    /* ── TAB TOOLTIPS ── */
+    .tab[data-tip]::after{
+      content:attr(data-tip);
+      position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+      background:rgba(15,15,35,.96);color:rgba(255,255,255,.9);
+      border:1px solid rgba(255,255,255,.12);
+      font-size:.75em;font-weight:500;line-height:1.4;
+      padding:7px 11px;border-radius:8px;white-space:nowrap;
+      pointer-events:none;opacity:0;transition:opacity .18s ease, transform .18s ease;
+      transform:translateX(-50%) translateY(4px);
+      box-shadow:0 4px 16px rgba(0,0,0,.4);
+      z-index:100
+    }
+    .tab[data-tip]:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
+    body.light-mode .tab[data-tip]::after{
+      background:rgba(30,30,50,.95);border-color:rgba(0,0,0,.15)
+    }
 
     /* ── TAB CONTENT ── */
     .tab-content{display:none;padding:0}
@@ -876,11 +895,11 @@
   </div>
 
   <div class="tabs" id="tabBar">
-    <div class="tab active" data-tab="home" onclick="switchTab('home',this)">Home</div>
-    <div class="tab" data-tab="timer" onclick="switchTab('timer',this)">Timer</div>
-    <div class="tab" data-tab="progress" onclick="switchTab('progress',this)">Progress</div>
-    <div class="tab" data-tab="history" onclick="switchTab('history',this)">History</div>
-    <div class="tab" data-tab="settings" onclick="switchTab('settings',this)">Settings</div>
+    <div class="tab active" data-tab="home" data-tip="Your focus overview &amp; quick-start" onclick="switchTab('home',this)">Home</div>
+    <div class="tab" data-tab="timer" data-tip="Pomodoro timer for your active session" onclick="switchTab('timer',this)">Timer</div>
+    <div class="tab" data-tab="progress" data-tip="Track your weekly &amp; monthly goals" onclick="switchTab('progress',this)">Progress</div>
+    <div class="tab" data-tab="history" data-tip="Browse all your past sessions" onclick="switchTab('history',this)">History</div>
+    <div class="tab" data-tab="settings" data-tip="Customise areas, goals &amp; appearance" onclick="switchTab('settings',this)">Settings</div>
   </div>
 
   <!-- ══ HOME ══ -->
