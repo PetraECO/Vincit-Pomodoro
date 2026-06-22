@@ -1103,6 +1103,14 @@ let confettiFrame     = null;
 
 // ══ INIT ══
 async function init() {
+  // Detect password recovery redirect BEFORE any auth events fire.
+  // Supabase puts type=recovery in the URL hash when the user clicks a reset link.
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  const searchParams = new URLSearchParams(window.location.search);
+  if (hashParams.get('type') === 'recovery' || searchParams.get('type') === 'recovery') {
+    isPasswordRecovery = true;
+  }
+
   // Device prefs (always local)
   const savedAppearance = store.get('appearance') || 'dark';
   setAppearance(savedAppearance);
@@ -1112,9 +1120,18 @@ async function init() {
   // Check Supabase session
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
-    currentUser = session.user;
-    await loadUserData();
-    showApp();
+    if (isPasswordRecovery) {
+      // Don't show the app — show the set-new-password form instead
+      document.getElementById('splashOverlay').classList.add('hidden');
+      document.getElementById('authOverlay').classList.remove('hidden');
+      document.querySelector('.auth-tabs').style.display = 'none';
+      hideAllAuthPanels();
+      document.getElementById('authSetNewPw').style.display = '';
+    } else {
+      currentUser = session.user;
+      await loadUserData();
+      showApp();
+    }
   } else {
     showAuthOverlay();
   }
