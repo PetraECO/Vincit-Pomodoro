@@ -398,8 +398,25 @@
     body.light-mode .btn-export:hover{background:#e4e4e7;color:#18181b}
 
     /* ── FOCUS TAB ── */
-    .focus-greeting{font-size:1.4em;font-weight:800;color:#fff;margin-bottom:6px}
-    .focus-nudge{font-size:.98em;font-weight:500;color:rgba(255,255,255,.55);margin-bottom:30px;min-height:1.4em;transition:opacity .5s ease;line-height:1.5}
+    /* ── Focus hero ── */
+    .focus-hero{text-align:center;padding:28px 4px 32px;margin-bottom:20px}
+    .focus-greeting{font-size:1.4em;font-weight:800;color:#fff;margin-bottom:8px}
+    .focus-nudge{font-size:.98em;font-weight:500;color:rgba(255,255,255,.55);margin-bottom:26px;min-height:1.4em;transition:opacity .5s ease;line-height:1.5}
+    .focus-letrip-btn{
+      width:100%;padding:20px;border:none;border-radius:16px;
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      color:#fff;font-family:inherit;font-size:1.2em;font-weight:800;
+      cursor:pointer;transition:all .22s;letter-spacing:-.2px;
+      box-shadow:0 8px 32px rgba(102,126,234,.45)
+    }
+    .focus-letrip-btn:hover{filter:brightness(1.08);transform:translateY(-2px)}
+    .focus-letrip-btn:active{transform:scale(.98)}
+    .focus-letrip-hint{margin-top:10px;font-size:.78em;color:rgba(255,255,255,.3);font-weight:500;min-height:1.1em}
+    .focus-area-divider{
+      display:flex;align-items:center;gap:12px;margin-bottom:16px;
+      font-size:.68em;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:rgba(255,255,255,.22)
+    }
+    .focus-area-divider::before,.focus-area-divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08)}
     .focus-last-session{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;font-size:.82em;color:rgba(255,255,255,.5);margin-bottom:20px}
     .focus-last-session strong{color:rgba(255,255,255,.8);font-weight:600}
     .focus-first-use{
@@ -431,6 +448,9 @@
     body.light-mode .focus-nudge{color:rgba(0,0,0,.45)}
     body.light-mode .focus-last-session{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08);color:rgba(0,0,0,.45)}
     body.light-mode .focus-last-session strong{color:rgba(0,0,0,.75)}
+    body.light-mode .focus-letrip-hint{color:rgba(0,0,0,.3)}
+    body.light-mode .focus-area-divider{color:rgba(0,0,0,.22)}
+    body.light-mode .focus-area-divider::before,body.light-mode .focus-area-divider::after{background:rgba(0,0,0,.08)}
     body.light-mode .focus-area-label{color:rgba(0,0,0,.35)}
     body.light-mode .focus-area-card{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08)}
     body.light-mode .focus-area-card:hover{background:rgba(0,0,0,.07);border-color:rgba(0,0,0,.15)}
@@ -1073,19 +1093,20 @@
   <!-- ══ FOCUS ══ -->
   <div id="focus" class="tab-content active">
 
-    <!-- Pre-session: nudge + area selection -->
+    <!-- Pre-session: hero CTA + optional area picker -->
     <div id="focusPreSession">
-      <div class="focus-greeting" id="focusGreeting"></div>
-      <div class="focus-nudge" id="focusNudge"></div>
-      <div class="focus-last-session" id="focusLastSession" style="display:none"></div>
-      <div class="focus-first-use" id="focusFirstUse" style="display:none">
-        <span class="focus-first-use-icon">🪨</span>
-        <div class="focus-first-use-text">
-          <strong>Welcome to Pebbl.</strong><br>
-          Nobody builds for the first pebble. We do. Tap an area below and drop yours.
-        </div>
+
+      <!-- Hero: shown every session -->
+      <div class="focus-hero">
+        <div class="focus-greeting" id="focusGreeting"></div>
+        <div class="focus-nudge" id="focusNudge"></div>
+        <button class="focus-letrip-btn" id="focusLetRipBtn" onclick="startQuickSession()">Let it rip →</button>
+        <div class="focus-letrip-hint" id="focusLetRipHint"></div>
       </div>
-      <div class="focus-area-label">Where are you focusing?</div>
+
+      <!-- Area picker: optional, for intentional tracking -->
+      <div class="focus-area-divider">or pick where you're focusing</div>
+      <div class="focus-last-session" id="focusLastSession" style="display:none"></div>
       <div class="focus-area-grid" id="focusAreaGrid"></div>
       <div id="focusStartSection" style="display:none">
         <div class="timer-options focus-duration">
@@ -1626,14 +1647,48 @@ function resetFocusToPreSession() {
   renderFocusAreaGrid();
 }
 
+function startQuickSession() {
+  // Last-used area for returning users, first area for new users
+  const lastAreaName = sessions.length ? sessions[0].area : null;
+  const area = (lastAreaName ? AREAS.find(a => a.name === lastAreaName) : null) || AREAS[0];
+  if (!area) return;
+
+  activeArea = area.name;
+  activeTask = '';
+  sessionElapsed = 0; sessionStartedAt = null; pomodorosCompleted = 0;
+  document.getElementById('celebNotes').value = '';
+  clearInterval(timerInterval);
+  isRunning = false; isWorkPhase = true;
+  timeRemaining = selectedDuration * 60;
+  updateTimerDisplay(); updateTimerRing();
+
+  document.getElementById('timerSessionLabel').textContent = `${area.icon} ${area.name}`;
+  document.getElementById('timerTaskLabel').textContent = '';
+  document.getElementById('startBtn').textContent = 'Start';
+  const endBtn = document.getElementById('endSessionBtn');
+  if (endBtn) endBtn.style.display = 'block';
+
+  document.getElementById('focusPreSession').style.display = 'none';
+  document.getElementById('focusTimerSection').style.display = '';
+}
+
 function renderFocus() {
   renderFocusGreeting();
   renderLastSessionNudge();
   renderFocusAreaGrid();
   startNudgeRotation();
-  // First-use callout: shown only when user has no sessions yet
-  const ffu = document.getElementById('focusFirstUse');
-  if (ffu) ffu.style.display = (!activeArea && sessions.length === 0) ? '' : 'none';
+
+  // "Let it rip" hint: tell returning users which area they're picking up
+  const hint = document.getElementById('focusLetRipHint');
+  if (hint) {
+    if (sessions.length > 0) {
+      const lastArea = AREAS.find(a => a.name === sessions[0].area);
+      hint.textContent = lastArea ? `picking up · ${lastArea.icon} ${lastArea.name}` : '';
+    } else {
+      hint.textContent = 'your first pebble';
+    }
+  }
+
   // If a session is active, stay on timer view
   if (activeArea) {
     document.getElementById('focusPreSession').style.display = 'none';
