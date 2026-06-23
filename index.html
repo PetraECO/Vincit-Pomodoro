@@ -685,15 +685,18 @@
   label{color:rgba(255,255,255,.55)}
   input,textarea,select{color:#fff}
   input::placeholder,textarea::placeholder{color:rgba(255,255,255,.35)}
+  .custom-dur-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0}
+  .custom-dur-lbl{font-size:.62em;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.35)}
   input.custom-dur{
-    width:58px;padding:7px 4px;background:rgba(255,255,255,.08)!important;
-    border:2px solid rgba(255,255,255,.15)!important;border-radius:8px;
-    color:#fff!important;font-family:inherit;font-size:.85em;text-align:center;
-    -moz-appearance:textfield;flex-shrink:0
+    width:72px;padding:9px 6px;background:rgba(255,255,255,.06)!important;
+    border:2px dashed rgba(255,255,255,.25)!important;border-radius:8px;
+    color:#fff!important;font-family:inherit;font-size:.9em;font-weight:700;text-align:center;
+    -moz-appearance:textfield;
   }
   input.custom-dur::-webkit-inner-spin-button,input.custom-dur::-webkit-outer-spin-button{-webkit-appearance:none}
-  input.custom-dur::placeholder{color:rgba(255,255,255,.35)!important}
-  input.custom-dur:focus{outline:none;border-color:var(--primary)!important;background:rgba(255,255,255,.12)!important}
+  input.custom-dur::placeholder{color:rgba(255,255,255,.3)!important;font-weight:400}
+  input.custom-dur:focus{outline:none;border-style:solid!important;border-color:var(--primary)!important;background:rgba(255,255,255,.1)!important}
+  body.light-mode .custom-dur-lbl{color:rgba(0,0,0,.35)}
 
   /* ══ APPEARANCE TOGGLE ══ */
   .appearance-toggle{display:flex;gap:10px}
@@ -769,7 +772,7 @@
   body.light-mode .appearance-btn{background:#f4f4f5;border-color:#e4e4e7;color:#71717a}
   body.light-mode .appearance-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
   body.light-mode input[type="color"]{border-color:#e4e4e7}
-  body.light-mode input.custom-dur{
+  body.light-mode input.custom-dur{border-color:rgba(0,0,0,.25)!important;background:rgba(0,0,0,.04)!important;
     background:#fff!important;border:2px solid #e4e4e7!important;color:#18181b!important
   }
   body.light-mode input.custom-dur::placeholder{color:#a1a1aa!important}
@@ -1042,7 +1045,10 @@
       <div id="focusStartSection" style="display:none">
         <div class="timer-options focus-duration">
           <div class="timer-option" onclick="setTimerDuration(15,this)">15</div>
-          <input type="number" id="timerCustom" class="custom-dur" placeholder="min" min="1" max="240" oninput="setCustomTimerDuration(this)">
+          <div class="custom-dur-wrap">
+            <input type="number" id="timerCustom" class="custom-dur" placeholder="own" min="1" max="240" oninput="setCustomTimerDuration(this)">
+            <span class="custom-dur-lbl">custom min</span>
+          </div>
           <div class="timer-option active" onclick="setTimerDuration(35,this)">35</div>
         </div>
         <button class="focus-start-btn" onclick="startFocusSession()">Start Focus →</button>
