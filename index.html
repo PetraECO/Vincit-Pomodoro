@@ -1662,21 +1662,18 @@ function cancelSession() {
 }
 
 function startQuickSession() {
-  // Last-used area for returning users, first area for new users
-  const lastAreaName = sessions.length ? sessions[0].area : null;
-  const area = (lastAreaName ? AREAS.find(a => a.name === lastAreaName) : null) || AREAS[0];
-  if (!area) return;
-
-  activeArea = area.name;
+  // Area-free quick start — 5 minutes, no tracking category
+  activeArea = 'Freeform';
   activeTask = '';
   sessionElapsed = 0; sessionStartedAt = null; pomodorosCompleted = 0;
   document.getElementById('celebNotes').value = '';
   clearInterval(timerInterval);
   isRunning = false; isWorkPhase = true;
-  timeRemaining = selectedDuration * 60;
+  selectedDuration = 5;
+  timeRemaining = 5 * 60;
   updateTimerDisplay(); updateTimerRing();
 
-  document.getElementById('timerSessionLabel').textContent = `${area.icon} ${area.name}`;
+  document.getElementById('timerSessionLabel').textContent = '🪨 Free focus';
   document.getElementById('timerTaskLabel').textContent = '';
   document.getElementById('startBtn').textContent = 'Start';
   const endBtn = document.getElementById('endSessionBtn');
@@ -1692,16 +1689,9 @@ function renderFocus() {
   renderFocusAreaGrid();
   startNudgeRotation();
 
-  // "Let it rip" hint: tell returning users which area they're picking up
+  // Hint below quick-start button
   const hint = document.getElementById('focusLetRipHint');
-  if (hint) {
-    if (sessions.length > 0) {
-      const lastArea = AREAS.find(a => a.name === sessions[0].area);
-      hint.textContent = lastArea ? `picking up · ${lastArea.icon} ${lastArea.name}` : '';
-    } else {
-      hint.textContent = 'your first pebble';
-    }
-  }
+  if (hint) hint.textContent = 'just 5 minutes · no area needed';
 
   // If a session is active, stay on timer view
   if (activeArea) {
