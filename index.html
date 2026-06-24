@@ -1447,6 +1447,8 @@ function showApp() {
   store.set('pebbl_visited', true);
   const btn = document.getElementById('signOutBtn');
   if (btn) btn.style.display = 'block';
+  // Request notification permission on sign-in so the prompt is visible
+  requestNotificationPermission();
   renderFocus();
   updateTimerDisplay();
   updateTimerRing();
@@ -2308,6 +2310,9 @@ function updateTimer() {
     if (isWorkPhase) sessionElapsed += Math.floor((Date.now()-timerStartTime)/1000);
     playCompletionSound();
     document.getElementById('startBtn').textContent = 'Start';
+    // Restore tabs as soon as timer ends
+    const tabBar = document.getElementById('tabBar');
+    if (tabBar) tabBar.classList.remove('focus-mode');
 
     if (isWorkPhase) {
       pomodorosCompleted++;
