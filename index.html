@@ -1442,7 +1442,14 @@ async function loadUserData() {
 
   const existingProfile = store.get('profile') || {};
   if (settings) {
-    if (settings.areas && Array.isArray(settings.areas) && settings.areas.length > 0) AREAS = settings.areas;
+    if (settings.areas && Array.isArray(settings.areas) && settings.areas.length > 0) {
+      AREAS = settings.areas;
+      store.set('areas_cache', AREAS); // keep localStorage in sync with Supabase
+    } else {
+      // Supabase has no areas yet — fall back to localStorage cache before using defaults
+      const cachedAreas = store.get('areas_cache');
+      if (cachedAreas && Array.isArray(cachedAreas) && cachedAreas.length > 0) AREAS = cachedAreas;
+    }
     if (settings.goals) areaGoals = settings.goals;
     // Use Supabase name if available, otherwise keep whatever's in localStorage
     store.set('profile', {name: settings.name || existingProfile.name || '', email: currentUser.email});
@@ -2794,6 +2801,7 @@ async function saveAreas() {
   });
   areaGoals = newGoals;
   AREAS = newAreas;
+  store.set('areas_cache', AREAS); // localStorage backup
   await saveSettings();
   showSettingsToast();
 }
@@ -2995,8 +3003,10 @@ async function selectEmoji(emoji) {
   const name  = document.getElementById(`aed-name-${i}`)?.value.trim()  || AREAS[i].name;
   const color = document.getElementById(`aed-color-${i}`)?.value        || AREAS[i].color;
   AREAS[i] = { name, icon: emoji, color };
+  // Write to localStorage first — instant, device-level persistence
+  store.set('areas_cache', AREAS);
   closeEmojiPicker();
-  // Persist immediately to Supabase — no Save button needed
+  // Then persist to Supabase for cross-device sync
   await saveSettings();
   renderAreaEditGrid();
   showSettingsToast();
