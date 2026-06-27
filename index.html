@@ -2649,22 +2649,38 @@ function renderHistory() {
   });
 }
 
-// ══ SAVE SETTINGS (always writes full state — prevents partial-upsert resets) ══
+// ══ SAVE SETTINGS ══
 async function saveSettings() {
   if (!currentUser) return;
   const profile = store.get('profile') || {};
-  const { error } = await sb.from('user_settings').upsert({
-    user_id:    currentUser.id,
+  const payload = {
     name:       profile.name || '',
     areas:      AREAS,
     goals:      areaGoals,
     appearance: store.get('appearance') || 'dark',
     theme:      store.get('theme') || null
-  }, { onConflict: 'user_id' });
-  if (error) {
-    console.error('saveSettings error:', error);
-    // Areas are already in localStorage — user won't lose data, but flag it
+  };
+  // Check if a row already exists for this user
+  const { data: existing } = await sb
+    .from('user_settings')
+    .select('user_id')
+    .eq('user_id', currentUser.id)
+    .maybeSingle();
+
+  let error;
+  if (existing) {
+    // Row exists — update it
+    ({ error } = await sb
+      .from('user_settings')
+      .update(payload)
+      .eq('user_id', currentUser.id));
+  } else {
+    // No row yet — insert one
+    ({ error } = await sb
+      .from('user_settings')
+      .insert({ user_id: currentUser.id, ...payload }));
   }
+  if (error) console.error('saveSettings error:', error);
 }
 
 // ══ SETTINGS ══
